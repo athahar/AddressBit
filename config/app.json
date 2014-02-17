@@ -1,0 +1,8 @@
+{    
+
+    "databaseConfig": {
+        "host": "localhost",
+        "database": "account-tmp"
+    },
+    "port":8000
+}
