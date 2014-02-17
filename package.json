@@ -21,7 +21,9 @@
     "dustjs-helpers": "~1.1.1",
     "makara": "~0.3.0",
     "mongodb": ">= 0.9.6-7",
-    "mongoose": "~3.8.1"
+    "mongoose": "~3.8.1",
+    "moment": "~2.5.1",
+    "crypto": "0.0.3"
   },
   "devDependencies": {
     "mocha": "~1.17.0",

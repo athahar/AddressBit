@@ -12,17 +12,19 @@
                 <legend>Edit existing account</legend>
                 <form method="POST" action="/account/{_id}">
                 
-                    <input type="email" name="email" placeholder="Email Address" value="{email}"><br>
-                    <input name="name" placeholder="Full Name"><br>
-                    <h4>
-                    <input name="addressLine1" placeholder="Address Line 1"><br>
-                    <input name="addressLine2" placeholder="Address Line 2(optional)"><br>
-                    <input name="city" placeholder="City"> &nbsp; <input name="state" placeholder="State"> &nbsp;<input name="zipcode" placeholder="zip">
+                    <p> Hi {email} ! </p>
+
+                    <input name="addressline1" placeholder="Address Line 1" value="{address.addressline1}"><br>
+                    <input name="addressline2" placeholder="Address Line 2(optional)" value="{address.addressline2}"><br>
+                    <input name="city" placeholder="City" value="{address.city}"> &nbsp; 
+                    <input name="state" placeholder="State" value="{address.state}"> &nbsp;
+                    <input name="zipcode" placeholder="zip" value="{address.zipcode}">
                     <input type="hidden" name="accountId" value="{_id}">
                     <input type="hidden" name="_csrf" value="{_csrf}">
                     <input type="hidden" name="_method" value="PUT">
+                    <br><br>
                     <input type="submit" value="Update">
-                                      
+
                 </form>
             </fieldset>
             {:else}

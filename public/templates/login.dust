@@ -1,0 +1,24 @@
+{>"layouts/master" /}
+{<title}
+   {title}
+{/title}
+
+{<body}
+    <h2>Wherify</h2>
+    <main role="main">
+        <div class="mb2">
+            <fieldset>
+                <legend>Login to access your details</legend>
+                <form method="POST" action="/login">
+                    <input type="email" name="email" placeholder="Email Address"><br>
+                    <input type="password" name="password" placeholder="Password"><br>                    
+                    <br>
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="submit" value="Login">
+                </form>
+                <p>Don't have an account? <a href="/signup"> Signup Now</a></p>
+            </fieldset>
+        </div>
+
+    </main>
+{/body}

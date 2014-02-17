@@ -1,0 +1,30 @@
+{>"layouts/master" /}
+{<title}
+    {title}
+
+{/title}
+
+{<body}
+    <h2>Whereify</h2>
+    <main role="main">
+        <div class="mb2">
+            <fieldset>
+                <legend>Sign up for a new account</legend>
+                <form method="POST" action="/signup">
+                    <input type="email" name="email" placeholder="Email Address"><br>
+                    <input type="password" name="password" placeholder="Password"><br>
+                    <p>Address Info</p>
+                    <input type="text" name="addressline1" placeholder="Address line1"><br>
+                    <input type="text" name="addressline2" placeholder="Address line2 "><br>
+                    <input type="text" name="city" placeholder="City">
+                    <input type="text" name="state" placeholder="State">
+                    <input type="text" name="zipcode" placeholder="Zip Code"><br>
+                    <br>
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="submit" value="Save">
+                </form>
+                <p>Already have an account? <a href="/login"> Login Now</a></p>
+            </fieldset>
+        </div>       
+    </main>
+{/body}

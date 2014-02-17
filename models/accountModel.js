@@ -6,7 +6,8 @@ var accountModel = function () {
 
     //Define a super simple schema for our accounts.
     var accountSchema = mongoose.Schema({
-        email: String,        
+        email: String,
+        password: String,
         address:{
             addressline1: String,
             addressline2: String,
@@ -16,6 +17,7 @@ var accountModel = function () {
         },
         age: Number,
         gender: String,
+        creationDate: {type: Date}
 
     });
     

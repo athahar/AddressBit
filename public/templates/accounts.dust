@@ -1,0 +1,31 @@
+{>"layouts/master" /}
+{<title}
+    Account Editor
+{/title}
+
+{<body}
+    <h2>Account List</h2>
+    <main role="main">
+        <div class="products">            
+            {?account}                 
+                <ul class="nm-np inline">
+                    {#account}
+                        <li >
+                            <form method="POST" action="/account">
+                                <input type="hidden" name="accountId" value="{.id}">
+                                <p class="nm-np">{.email} <a href="/account/{.id}"> Edit </a> </p>
+                                <p class="nm-np">{#address} {addressline1} {addressline2} {~n}{city} {state}{zipcode}{/address}</p>
+                                <input type="submit" value="Delete">
+                                <!--If we don't at the Cross-Site Request Forgey token, this POST will be rejected-->
+                                <input type="hidden" name="_csrf" value="{_csrf}">
+                                <input type="hidden" name="_method" value="DELETE">                                
+                            </form>
+                        </li>
+                    {/account}
+                </ul>                
+            {:else}
+                There are no account :(
+            {/account}
+        </div>
+    </main>
+{/body}

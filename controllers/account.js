@@ -3,13 +3,15 @@
  */
 'use strict';
 var Account = require('../models/accountModel');
+var WFEncrypt = require('../lib/WFEncrypt');
+var moment      = require('moment');
 
 module.exports = function (server) {
 
     /**
      * Retrieve a list of all account for editing.
      */
-    server.get('/account', function (req, res) {
+    server.get('/accounts', function (req, res) {
 
         Account.find(function (err, prods) {
             if (err) {
@@ -21,13 +23,128 @@ module.exports = function (server) {
                 account: prods
             };
             console.dir(model);
-            res.render('account', model);
+            res.render('accounts', model);
         });
 
     });
 
 
-        /**
+
+     /**
+     * Render Login page
+     */
+    server.get('/login', function (req, res) {
+        
+        res.render('login', { title: 'Hello - Please Login To Your Account' });
+        
+    });
+
+
+    /**
+     * Delete a account.
+     * @paaram: req.body.accountId Is the unique id of the account to remove.
+     */
+    server.post('/login', function (req, res) {
+
+        var email           = req.body.email && req.body.email.trim(),
+            password        = req.body.password && req.body.password.trim();
+
+        Account.findOne({email:email}, function(error, obj) {
+            if (obj == null){
+                // console.log('email-not-found : ' + email)
+                res.send('email-not-found');
+            }   else{
+                // console.log('email-found : ' + email)
+                WFEncrypt.validatePassword(password, obj.password, function(err, result) {
+                    if (result){ // successfully validated                        
+                        res.redirect('/account/' + obj._id);
+                    }   else{
+                        //console.log('invalid-password : ' + email)
+                        res.send('invalid-password');
+                    }
+                });
+            }
+        });
+
+    });
+
+    /**
+     * Retrieve a list of all account for editing.
+     */
+    server.get('/signup', function (req, res) {
+
+        res.render('signup', { title: 'Whereify - Create an account' });
+
+    });
+
+
+    /**
+     * Add a new account to the database.
+     */
+    server.post('/signup', function (req, res) {
+        var email           = req.body.email && req.body.email.trim(),
+            password        = req.body.password && req.body.password.trim(),
+            addressline1    = req.body.addressline1 && req.body.addressline1.trim(),
+            addressline2    = req.body.addressline2 && req.body.addressline2.trim(),
+            city            = req.body.city && req.body.city.trim(),
+            state           = req.body.state && req.body.state.trim(),
+            zipcode         = req.body.zipcode && req.body.zipcode.trim(),
+            age             = req.body.age && req.body.age.trim() && parseFloat(req.body.age, 10);
+            
+        /*
+            console.log('****************************');
+            console.log('email : ' + email);
+            console.log('password : ' + password);
+            console.log('addressline1 : ' + addressline1);
+            console.log('addressline2 : ' + addressline2);
+            console.log('city : ' + city);
+            console.log('state : ' + state);
+            console.log('zipcode : ' + zipcode);
+            console.log('****************************'); 
+        */
+        
+        var newAccount = new Account({
+            email: email,
+            password: password,
+            address: {
+                addressline1: addressline1,
+                addressline2: addressline2,
+                city: city,
+                state: state,
+                zipcode: zipcode
+            }, 
+            age: age
+        });
+
+
+        Account.findOne({email:email}, function(error, obj) {
+            if (obj){
+                //console.log('email-taken');
+                res.send("email-taken", 400);
+            }   else{
+                WFEncrypt.saltAndHash(newAccount.password, function(hash){
+                    newAccount.password = hash;
+                    newAccount.creationDate = moment().format('ll'); // append date stamp when record was created 
+                    
+                    newAccount.save(function (err,obj) {
+                        if (err) {
+                            console.log('save error', err);                            
+                            res.send(err.message, 400);
+                        }
+ 
+                        res.redirect('/account/' + obj._id);
+                    });
+
+                });
+            }
+        });
+
+    });
+
+
+
+
+    /**
      * Retrieve a list of all account for editing.
      */
     server.get('/account/:userId', function (req, res) {
@@ -43,79 +160,10 @@ module.exports = function (server) {
             {
                 account: obj
             };
-            console.log("****************");
             console.dir(model);
             res.render('editaccount', model);
         });
 
-    });
-
-
-    /**
-     * Add a new account to the database.
-     * **** PLEASE READ THE COMMENT BELOW! ****
-     */
-    server.post('/account', function (req, res) {
-        var email = req.body.email && req.body.email.trim(),
-            addressline1 = req.body.addressline1 && req.body.addressline1.trim(),
-            addressline2 = req.body.addressline2 && req.body.addressline2.trim(),
-            city = req.body.city && req.body.city.trim(),
-            state = req.body.state && req.body.state.trim(),
-            zipcode = req.body.zipcode && req.body.zipcode.trim();
-            
-/*
-            console.log('****************************');
-            console.log('addressline1 : ' + addressline1);
-            console.log('addressline2 : ' + addressline2);
-            console.log('city : ' + city);
-            console.log('state : ' + state);
-            console.log('zipcode : ' + zipcode);
-            console.log('****************************');
-
-*/   
-
-        //***** PLEASE READ THIS COMMENT ******\\\
-        /*
-         Using floating point numbers to represent currency is a *BAD* idea \\
-
-         You should be using arbitrary precision libraries like:
-         https://github.com/justmoon/node-bignum instead.
-
-         So why am I not using it here? At the time of this writing, bignum is tricky to install
-         on Windows-based systems. I opted to make this example accessible to more people, instead
-         of making it mathematically correct.
-
-         I would strongly advise against using this code in accountion.
-         You've been warned!
-         */
-        var age = parseFloat(req.body.age, 10);
-
-        
-        var newAccount = new Account({
-            email: email,
-            address: {
-                addressline1: addressline1,
-                addressline2: addressline2,
-                city: city,
-                state: state,
-                zipcode: zipcode
-            }, 
-            age: age
-        });
-
-        
-        /*
-         The call back receives two more arguments -> account/s that is/are added to the database
-         and number of rows that are affected because of save, which right now are ignored.
-         We only check for errors.
-         */
-        newAccount.save(function (err) {
-            if (err) {
-                console.log('save error', err);
-            }
-
-            res.redirect('/account');
-        });
     });
 
     /**
@@ -127,7 +175,7 @@ module.exports = function (server) {
             if (err) {
                 console.log('Remove error: ', err);
             }
-            res.redirect('/account');
+            res.redirect('/accounts');
         });
     });
 
@@ -136,34 +184,56 @@ module.exports = function (server) {
      * Edit an account.     
      */
     server.put('/account/:id', function (req, res) {
-        console.log('PUT received. Ignoring.');
+        console.log('PUT received..');
+       
+        var addressline1    = req.body.addressline1 && req.body.addressline1.trim(),
+            addressline2    = req.body.addressline2 && req.body.addressline2.trim(),
+            city            = req.body.city && req.body.city.trim(),
+            state           = req.body.state && req.body.state.trim(),
+            zipcode         = req.body.zipcode && req.body.zipcode.trim(),
+            age             = req.body.age && req.body.age.trim() && parseFloat(req.body.age, 10);
 
-         var email = req.body.email && req.body.email.trim(),
-            firstName = req.body.firstName && req.body.firstName.trim(),
-            lastName = req.body.lastName && req.body.lastName.trim(),
-            age = req.body.age && req.body.age.trim();
+            console.log('****************************');           
+            
+            console.log('addressline1 : ' + addressline1);
+            console.log('addressline2 : ' + addressline2);
+            console.log('city : ' + city);
+            console.log('state : ' + state);
+            console.log('zipcode : ' + zipcode);
+            console.log('****************************'); 
+
+            console.log('save : ' + req.params.id);
 
 
-        console.log('save : ' + req.params.id);
 
         // http://docs.mongodb.org/manual/reference/method/db.collection.update/#update-parameter
         // update with $set will update the existing document.        
 
-        Account.update({_id: req.params.id}, {
-            $set: {
-                name:{
-                    first:firstName,
-                    last:lastName
-                },
-                email:email,
-                age:age
-            }
-        }, function (err) {
-            if (err) {
-                console.log('Remove error: ', err);
-            }
-            res.redirect('/account');
-        });
+            Account.update(
+                { _id: req.params.id},    
+                { $set: {
+                        address: {
+                            addressline1: addressline1,
+                            addressline2: addressline2,
+                            city: city,
+                            state: state,
+                            zipcode: zipcode
+                        }
+                    }
+                }, 
+                { upsert: true },
+                function (err) {
+                    if (err) {
+                        console.log('update error: ', err);
+                    }else{
+                        res.send('successfully updated ');    
+                    }
+                    
+                });
+
+
+
+        
 
     });
 
