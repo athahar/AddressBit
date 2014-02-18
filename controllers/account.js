@@ -141,7 +141,7 @@ module.exports = function (server) {
     /**
      * Retrieve a list of all account for editing.
      */
-    server.get('/account/:userId', function (req, res) {
+    server.get('/account/:userId', auth.isAuthenticated(), function (req, res) {
 
        User.findOne({_id: req.params.userId}, function (err, obj) {
             if (err) {
@@ -162,7 +162,7 @@ module.exports = function (server) {
      * Delete a account.
      * @paaram: req.body.accountId Is the unique id of the account to remove.
      */
-    server.delete('/account', function (req, res) {
+    server.delete('/account', auth.isAuthenticated(), function (req, res) {
        User.remove({_id: req.body.accountId}, function (err) {
             if (err) {
                 console.log('Remove error: ', err);
@@ -175,7 +175,7 @@ module.exports = function (server) {
     /**
      * Edit an account.     
      */
-    server.put('/account/:id', function (req, res) {
+    server.put('/account/:id', auth.isAuthenticated(), function (req, res) {
         console.log('PUT received..');
        
         var addressline1    = req.body.addressline1 && req.body.addressline1.trim(),
