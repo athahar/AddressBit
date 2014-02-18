@@ -4,5 +4,8 @@
         "host": "localhost",
         "database": "account-tmp"
     },
-    "port":8000
+    "port":8000,
+    "bcrypt": {
+        "difficulty": 8
+    }
 }
