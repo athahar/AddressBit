@@ -1,0 +1,25 @@
+{>"layouts/master" /}
+
+{<body}
+    
+    
+    
+	<div>
+	{#result}
+	<h1>Destination  - {datasets[0]}</h1>
+	
+		<ul>
+		{#topten}
+			<li> 	
+					<strong>{title}</strong>					
+					<p>Description: {text}</p>
+					{#images}<img src="http://api.pearson.com{image}" alt="{images.title}"/>{/images}
+					<br/><br/><br/>
+						
+			</li>
+			{/topten}	
+		</ul>
+		
+	{/result}
+	<div>
+{/body}

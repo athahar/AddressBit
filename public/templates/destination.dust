@@ -1,5 +1,14 @@
 {>"layouts/master" /}
 
 {<body}
-    <h1>{@pre type="content" key="greeting"/}</h1>
+    <h1>Destinations</h1>
+
+	<div>
+	{#results}
+		<ul>
+			<li> {datasets[0]} : <a href="{url}">{title}</a></li>
+		</ul>
+		
+	{/results}
+	<div>
 {/body}
