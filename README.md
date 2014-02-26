@@ -10,3 +10,10 @@
 
 
 Based on krakenjs MVC
+
+
+Part 2: 
+Using Pearson Travel APIs for getting top 10 information
+https://developer.pearson.com/apis/topten-travel-guides/
+
+Try http://localhost:8000/destinations on the browser
