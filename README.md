@@ -1,6 +1,6 @@
-# AddressBit
+# Whereify
 
-"Store all Addresses in one place"
+"One stop to keep your address updated on the move"
 
 1. Install node, mongodb
 2. start "mongod" in terminal
